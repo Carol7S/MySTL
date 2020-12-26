@@ -13,9 +13,10 @@
         #include <iostream>
         #define __THROW_BAD_ALLOC std::cerr << "out of memory!" << std::endl; exit(1);
 #endif
-//第一级配置 malloc_alloc，第二级配置器 __default_alloc_template。
+
 namespace mystl     //第一级namespace是提供给外部用户使用的（后同）
 {
+    //第一级配置 malloc_alloc，第二级配置器 __default_alloc_template。
     namespace detail  //第二级namespace是stl内部使用的实现细节（后同）
     {
         //第一级配置器 __malloc_alloc_template

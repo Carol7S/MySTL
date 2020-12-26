@@ -101,6 +101,9 @@
 		<Unit filename="H:/code/code/c/clion/MySTL/main.cpp">
 			<Option target="MySTL"/>
 		</Unit>
+		<Unit filename="H:/code/code/c/clion/MySTL/uninitialized.h">
+			<Option target="MySTL"/>
+		</Unit>
 		<Unit filename="H:/code/code/c/clion/MySTL/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

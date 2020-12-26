@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+H:/code/code/c/clion/MySTL/alloctor.h
+stdlib.h
+-
+new
+-
+iostream
+-
+
+H:/code/code/c/clion/MySTL/main.cpp
+alloctor.h
+H:/code/code/c/clion/MySTL/alloctor.h
+

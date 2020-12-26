@@ -63,12 +63,13 @@ namespace mystl     //第一级namespace是提供给外部用户使用的（后�
             }
         };
 
-        //开始定义函数  3个内存不足分配函数
-        //malloc_alloc out of memory handing
+
+        //malloc_alloc out of memory handing,异常处理
         //初值为0
         template<int inst>
         void (* __malloc_alloc_template<inst>::__malloc_alloc_oom_handler)() = 0;
 
+        //开始定义函数  3个内存不足分配函数
         template<int inst>
         void* __malloc_alloc_template<inst>::oom_malloc(size_t n)
         {
@@ -340,7 +341,7 @@ namespace mystl     //第一级namespace是提供给外部用户使用的（后�
 
     //SGI封装的标准的alloc配置器接口（一般都使用这个标准配置器接口）
     //使用这个接口时配置大小不再是以字节为单位，而是以元素大小为单位
-    template<typename T, class Alloc = alloc>  //缺省使用alloc为配置器
+    template<typename T, class Alloc>
     class simple_alloc{
     public:
         static T* allocate(size_t n){

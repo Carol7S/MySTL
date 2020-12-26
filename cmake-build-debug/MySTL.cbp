@@ -83,13 +83,19 @@
 		<Unit filename="H:/code/code/c/clion/MySTL/JJAlloc.h">
 			<Option target="MySTL"/>
 		</Unit>
-		<Unit filename="H:/code/code/c/clion/MySTL/MyAlgorithm.h">
+		<Unit filename="H:/code/code/c/clion/MySTL/__type_traits.h">
 			<Option target="MySTL"/>
 		</Unit>
 		<Unit filename="H:/code/code/c/clion/MySTL/alloctor.h">
 			<Option target="MySTL"/>
 		</Unit>
+		<Unit filename="H:/code/code/c/clion/MySTL/construct.h">
+			<Option target="MySTL"/>
+		</Unit>
 		<Unit filename="H:/code/code/c/clion/MySTL/iterator.h">
+			<Option target="MySTL"/>
+		</Unit>
+		<Unit filename="H:/code/code/c/clion/MySTL/jjauto_ptr.h">
 			<Option target="MySTL"/>
 		</Unit>
 		<Unit filename="H:/code/code/c/clion/MySTL/main.cpp">

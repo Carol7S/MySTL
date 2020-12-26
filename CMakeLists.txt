@@ -3,4 +3,4 @@ project(MySTL)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(MySTL main.cpp MyAlgorithm.h JJAlloc.h iterator.h alloctor.h)
+add_executable(MySTL main.cpp JJAlloc.h iterator.h alloctor.h construct.h jjauto_ptr.h __type_traits.h)

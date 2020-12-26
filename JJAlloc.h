@@ -48,6 +48,7 @@ namespace jj
         {
             ptr->~T();  //由于placement new 对象的空间不会自动释放（对象实际上是借用别人的空间），
             // 所以必须显示的调用类的析构函数，如ptr->~T()。
+            //如student类，student*型的ptr, ptr->~student()就等于调用了类的析构函数
         }
     }
     //简易空间配置器

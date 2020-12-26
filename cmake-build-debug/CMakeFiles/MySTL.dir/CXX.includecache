@@ -6,15 +6,21 @@
 
 #IncludeRegexTransform: 
 
-H:/code/code/c/clion/MySTL/alloctor.h
-stdlib.h
--
+H:/code/code/c/clion/MySTL/__type_traits.h
+
+H:/code/code/c/clion/MySTL/construct.h
+iterator.h
+H:/code/code/c/clion/MySTL/iterator.h
+__type_traits.h
+H:/code/code/c/clion/MySTL/__type_traits.h
 new
 -
-iostream
+
+H:/code/code/c/clion/MySTL/iterator.h
+cstddef
 -
 
 H:/code/code/c/clion/MySTL/main.cpp
-alloctor.h
-H:/code/code/c/clion/MySTL/alloctor.h
+construct.h
+H:/code/code/c/clion/MySTL/construct.h
 

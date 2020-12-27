@@ -2,7 +2,7 @@
 // Created by Carol on 2020/12/27.
 //
 //实现for_each, search, sort
-//sort未实现堆排序部分
+//sort未实现堆排序部分以及自定义函数功能
 #ifndef MYSTL_ALGO_H
 #define MYSTL_ALGO_H
 namespace mystl{

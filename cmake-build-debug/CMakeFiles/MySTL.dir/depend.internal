@@ -3,8 +3,8 @@
 
 CMakeFiles/MySTL.dir/main.cpp.obj
  H:/code/code/c/clion/MySTL/__type_traits.h
- H:/code/code/c/clion/MySTL/algo.h
  H:/code/code/c/clion/MySTL/algobase.h
- H:/code/code/c/clion/MySTL/algorithm.h
+ H:/code/code/c/clion/MySTL/construct.h
  H:/code/code/c/clion/MySTL/iterator.h
  H:/code/code/c/clion/MySTL/main.cpp
+ H:/code/code/c/clion/MySTL/uninitialized.h

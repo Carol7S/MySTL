@@ -218,7 +218,7 @@ namespace mystl     //第一级namespace是提供给外部用户使用的（后�
         }
 
         template<bool threads, int inst>
-        //realloc
+        //realloc 空间重配置
         void* __default_alloc_template<threads, inst>::reallocate(void *p, size_t old_sz, size_t new_sz)
         {
             //直接调用第一级

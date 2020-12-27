@@ -39,7 +39,7 @@ namespace mystl{
 
             typedef __false_type	has_trivial_default_constructor;    //默认构造函数
             typedef __false_type	has_trivial_copy_constructor;       //拷贝构造函数
-            typedef __false_type	has_trivial_assignment_operator;    //运算符重载
+            typedef __false_type	has_trivial_assignment_operator;    //赋值函数
             typedef __false_type	has_trivial_destructor;             //析构
             typedef __false_type	is_POD_type;
             //SGI把所有内嵌型别都定义为__false_type，这是最保守的值（调用其ctor、detor），//构造，析构

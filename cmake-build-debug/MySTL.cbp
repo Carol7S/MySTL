@@ -86,6 +86,9 @@
 		<Unit filename="H:/code/code/c/clion/MySTL/__type_traits.h">
 			<Option target="MySTL"/>
 		</Unit>
+		<Unit filename="H:/code/code/c/clion/MySTL/algobase.h">
+			<Option target="MySTL"/>
+		</Unit>
 		<Unit filename="H:/code/code/c/clion/MySTL/alloctor.h">
 			<Option target="MySTL"/>
 		</Unit>

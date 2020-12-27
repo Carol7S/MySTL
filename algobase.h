@@ -595,56 +595,6 @@ namespace mystl{        //外部接口
             return strcmp(s1, s2) == 0;
         }
     };
-
-    //for_each
-    template<class InputIterator, class Function>
-    Function for_each(InputIterator first, InputIterator last, Function f){
-        for(; first!=last; ++first){
-            f(*first);
-        }
-        return f;
-    }
-    namespace detail{
-        //search 内部
-        template<class ForwardIterator1, class ForwardIterator2, class Distance1, class Distanec2>
-        ForwardIterator1 __search(ForwardIterator1 first1, ForwardIterator1 last1,
-                                  ForwardIterator2 first2, ForwardIterator2 last2,
-                                  Distance1*, Distanec2*)
-        {
-            Distance1 d1 = distance(first1, last1, d1);
-            Distanec2 d2 = distance(first2, last2, d2);
-            if(d1 < d2) return last1;  //如果第二序列大于第一序列，那不可能成为他的子序列
-            ForwardIterator1 current1 = first1;
-            ForwardIterator2 current2 = first2;
-            while(current2 != last2){
-                if(*current1 == *current2){
-                    ++current1;
-                    ++current2;
-                } else{//如果元素不相等
-                    if(d1 == d2)//如果长度相同，那就不可能是子序列了
-                        return last1;
-                    else{//序列1的长度大于序列2
-                        current1 = ++first1;     //第一序列的标兵向后一位
-                        current2 = first2;      //重新调整序列2的起点
-                        --d1;                   //已经排除序列1的第一个元素，所以要--
-                    }
-                }
-            }
-            return first1;
-        }
-    }// end of namespace detail
-    //search外部接口
-    template<class ForwardIterator1, class ForwardIterator2>
-    inline ForwardIterator1 search(ForwardIterator1 first1,
-                                    ForwardIterator1 last1,
-                                    ForwardIterator2 first2,
-                                    ForwardIterator2 last2)
-    {
-        return __search(first1, last1, first2, last2, distance_type(first1), distance_type(first2));
-    }
-
-    //sort外部接口
-
 }
 
 #endif //MYSTL_ALGOBASE_H

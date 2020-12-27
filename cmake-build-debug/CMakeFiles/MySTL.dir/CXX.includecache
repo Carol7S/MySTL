@@ -8,6 +8,8 @@
 
 H:/code/code/c/clion/MySTL/__type_traits.h
 
+H:/code/code/c/clion/MySTL/algo.h
+
 H:/code/code/c/clion/MySTL/algobase.h
 iterator.h
 H:/code/code/c/clion/MySTL/iterator.h
@@ -16,11 +18,17 @@ H:/code/code/c/clion/MySTL/__type_traits.h
 cstring
 -
 
+H:/code/code/c/clion/MySTL/algorithm.h
+algobase.h
+H:/code/code/c/clion/MySTL/algobase.h
+algo.h
+H:/code/code/c/clion/MySTL/algo.h
+
 H:/code/code/c/clion/MySTL/iterator.h
 cstddef
 -
 
 H:/code/code/c/clion/MySTL/main.cpp
-algobase.h
-H:/code/code/c/clion/MySTL/algobase.h
+algorithm.h
+H:/code/code/c/clion/MySTL/algorithm.h
 

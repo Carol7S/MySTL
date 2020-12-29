@@ -7,6 +7,8 @@
 //#include "uninitialized.h"
 #include "vector.h"
 #include "list.h"
+#include "deque.h"
+#include "stack.h"
 //using namespace std;
 
 int main() {

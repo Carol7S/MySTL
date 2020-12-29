@@ -12,11 +12,18 @@
 
 namespace mystl{
     namespace detail{
-        template<class T, class Ref, class Ptr, size_t BufSiz = 0>
+        //如果n不等于0，传回n，表示BufSiz由用户自定义，就表示一个buf放n个
+        //如果n等于0，就使用系统默认值
+        //sz（元素大小） < 512,传回512/sz   比如int，4个字节，一个buf就可以放128个int型的数据
+        //>=, 传回1，说明这个数据结构太大了，一个buf就都用来放他
+        inline size_t __deque_buf_size(size_t n, size_t sz) {
+            return n != 0 ? n : (sz < 512 ? size_t(512 / sz) : size_t(1));
+        }
+        template<class T, class Ref, class Ptr, size_t BufSize = 0>
         struct __deque_iterator{//deque迭代器
-            typedef __deque_iterator<T, T&, T*, BufSiz>             iterator;
-            typedef __deque_iterator<T, T&, T*, BufSiz>             const_iterator;
-            static size_t buffer_size() { return __deque_buf_size(BufSiz, sizeof(T)); }
+            typedef __deque_iterator<T, T&, T*, BufSize>             iterator;
+            typedef __deque_iterator<T, T&, T*, BufSize>             const_iterator;
+            static size_t buffer_size() { return __deque_buf_size(BufSize, sizeof(T)); }
 
             typedef random_access_iterator_tag                      iterator_category;
             typedef T                                               value_type;
@@ -123,26 +130,17 @@ namespace mystl{
                 return (node == x.node) ? (cur < x.cur) : (node < x.node);
             }
         };//end of iterator
-
-        //如果n不等于0，传回n，表示BufSiz由用户自定义，就表示一个buf放n个
-        //如果n等于0，就使用系统默认值
-        //sz（元素大小） < 512,传回512/sz   比如int，4个字节，一个buf就可以放128个int型的数据
-        //>=, 传回1，说明这个数据结构太大了，一个buf就都用来放他
-        inline size_t __deque_buf_size(size_t n, size_t sz){
-            return n != 0 ? n : (sz < 512 ?  size_t(512 / sz) : size_t(1));
-        }
-
     } // end of namespace detail
 
     //deque的结构
-    template<class T, class Alloc = alloc, size_t BufSiz = 0>
+    template<class T, class Alloc = alloc, size_t BufSize = 0>
     class deque{
     public:
 
         //维护一个指向map的指针，start和finish两个迭代器，指向第一缓冲区的第一个元素和最后一个缓冲区的最后一个元素的下一个位置,
         // 同时也必须记住mapsize,一旦map大小不够，就分配一块更大的map
     public://basic type
-        typedef typename detail::__deque_iterator<T, T&, T*, BufSiz>::iterator_category         category;
+        typedef typename detail::__deque_iterator<T, T&, T*, BufSize>::iterator_category         category;
         typedef typename detail::__deque_iterator<T, T&, T*, BufSize>::const_iterator		const_iterator;
         typedef typename detail::__deque_iterator<T, T&, T*, BufSize>::value_type			value_type;
         typedef typename detail::__deque_iterator<T, T&, T*, BufSize>::pointer				pointer;
@@ -155,7 +153,7 @@ namespace mystl{
         size_t (*buffer_size)() = detail::__deque_iterator<T, T&, T*, BufSize>::buffer_size;
 
     public:
-        typedef typename detail::__deque_iterator<T, T&, T*, BufSiz>::iterator              iterator;//迭代器
+        typedef typename detail::__deque_iterator<T, T&, T*, BufSize>::iterator              iterator;//迭代器
 
     protected://map_poniter
         //指针的指针
@@ -194,9 +192,9 @@ namespace mystl{
         typedef simple_alloc<pointer, Alloc> map_allocator;         //释放map
     public:
         deque() : start(), finish(), map(0), map_size(0){
-                create_map_and_nodes(0);    //拥有0个元素、1个缓冲区、map大小为 3
+                create_map_and_node(0);    //拥有0个元素、1个缓冲区、map大小为 3
         }
-        deque(int n, const value_typ& value)
+        deque(int n, const value_type& value)
         :start(), finish(), map(0), map_size(0)
         {
             fill_initialize(n, value);
@@ -223,13 +221,13 @@ namespace mystl{
         iterator insert_aux(iterator pos, value_type& x);
     };
 
-    //create_map_and_nodes()负责申请 num_elements 个元素的存储空间，并安排好deque的结构
-    template<class T, class Alloc, size_t BufSiz>
-    void deque<T, Alloc, BufSiz>::create_map_and_node(size_type num_elements){
+    //create_map_and_node()负责申请 num_elements 个元素的存储空间，并安排好deque的结构
+    template<class T, class Alloc, size_t BufSize>
+    void deque<T, Alloc, BufSize>::create_map_and_node(size_type num_elements){
         //需要节点数 = (元素个数 / 缓冲区大小可容纳元素个数) + 1，如果刚好整除会多配一个节点设为last
         size_type num_nodes = num_elements / buffer_size() + 1;
         //一个map最少管理3个节点，最多管理所需节点数+2，前后各留一个便于扩展
-        map_size = max(initial_map_size(), num_nodes+2);
+        map_size = num_nodes + 2;
         map = map_allocator::allocate(map_size);
 
         //以下令 nstart 和 nfinish 指向map所拥有的全部节点的最中央区段
@@ -262,12 +260,13 @@ namespace mystl{
     }
 
     //fill_initialize() 负责安排好deque的结构，并将元素设定初值
-    template<class T, class Alloc, size_t BufSiz>
-    void deque<T, Alloc, BufSiz>::fill_initialize(size_type n,
+    template<class T, class Alloc, size_t BufSize>
+    void deque<T, Alloc, BufSize>::fill_initialize(size_type n,
                                     const value_type& value){
         create_map_and_node(n);
+        map_pointer cur;
         try{
-            for(cur = start.ndoe; cur < finish,node; ++cur)
+            for(cur = start.ndoe; cur < finish.node; ++cur)
             {
                 //为每个节点的缓冲区设定初值
                 uninitialized_fill(*cur, *cur + buffer_size(), value);
@@ -340,7 +339,7 @@ namespace mystl{
     template<class T, class Alloc, size_t BufSize>
     void deque<T, Alloc, BufSize>::push_back_aux(const value_type &t) {
         value_type t_copy = t;
-        reserve_map_at_back();		//当 map 的备用空间已用完时，无法再增加缓冲区节点，必须换一个更大的 map
+        reverse_map_at_back();		//当 map 的备用空间已用完时，无法再增加缓冲区节点，必须换一个更大的 map
         *(finish.node + 1) = data_allocator::allocate(buffer_size());	   //配置一个新节点
         try{
             construct(finish.cur, t_copy);  //在原始 finish 所指缓冲区的最后一个存储位置构造元素
@@ -366,7 +365,7 @@ namespace mystl{
     template<class T, class Alloc, size_t BufSize>
     void deque<T, Alloc, BufSize>::push_front_aux(const value_type &t) {
         value_type t_copy = t;
-        reserve_map_at_front();     //若符合某种条件就要换一个map
+        reverse_map_at_front();     //若符合某种条件就要换一个map
         *(start.node - 1) = data_allocator::allocate(buffer_size());	   //配置一个新节点
         try{
             start.set_node(start.node - 1);		//更新 start 指向新节点

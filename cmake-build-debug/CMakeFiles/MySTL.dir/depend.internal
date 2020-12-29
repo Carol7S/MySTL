@@ -6,8 +6,10 @@ CMakeFiles/MySTL.dir/main.cpp.obj
  H:/code/code/c/clion/MySTL/algobase.h
  H:/code/code/c/clion/MySTL/alloctor.h
  H:/code/code/c/clion/MySTL/construct.h
+ H:/code/code/c/clion/MySTL/deque.h
  H:/code/code/c/clion/MySTL/iterator.h
  H:/code/code/c/clion/MySTL/list.h
  H:/code/code/c/clion/MySTL/main.cpp
+ H:/code/code/c/clion/MySTL/stack.h
  H:/code/code/c/clion/MySTL/uninitialized.h
  H:/code/code/c/clion/MySTL/vector.h

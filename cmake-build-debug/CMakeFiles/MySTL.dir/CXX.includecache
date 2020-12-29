@@ -32,6 +32,18 @@ H:/code/code/c/clion/MySTL/__type_traits.h
 new
 -
 
+H:/code/code/c/clion/MySTL/deque.h
+alloctor.h
+H:/code/code/c/clion/MySTL/alloctor.h
+construct.h
+H:/code/code/c/clion/MySTL/construct.h
+iterator.h
+H:/code/code/c/clion/MySTL/iterator.h
+__type_traits.h
+H:/code/code/c/clion/MySTL/__type_traits.h
+uninitialized.h
+H:/code/code/c/clion/MySTL/uninitialized.h
+
 H:/code/code/c/clion/MySTL/iterator.h
 cstddef
 -
@@ -53,6 +65,16 @@ vector.h
 H:/code/code/c/clion/MySTL/vector.h
 list.h
 H:/code/code/c/clion/MySTL/list.h
+deque.h
+H:/code/code/c/clion/MySTL/deque.h
+stack.h
+H:/code/code/c/clion/MySTL/stack.h
+
+H:/code/code/c/clion/MySTL/stack.h
+deque.h
+H:/code/code/c/clion/MySTL/deque.h
+iostream
+-
 
 H:/code/code/c/clion/MySTL/uninitialized.h
 iterator.h

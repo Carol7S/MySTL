@@ -4,7 +4,9 @@
 //#include "construct.h"
 //#include "algobase.h"
 //#include "algorithm.h"
-#include "uninitialized.h"
+//#include "uninitialized.h"
+#include "vector.h"
+#include "list.h"
 //using namespace std;
 
 int main() {

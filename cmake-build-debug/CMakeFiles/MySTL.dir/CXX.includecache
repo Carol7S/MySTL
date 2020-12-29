@@ -16,6 +16,14 @@ H:/code/code/c/clion/MySTL/__type_traits.h
 cstring
 -
 
+H:/code/code/c/clion/MySTL/alloctor.h
+stdlib.h
+-
+new
+-
+iostream
+-
+
 H:/code/code/c/clion/MySTL/construct.h
 iterator.h
 H:/code/code/c/clion/MySTL/iterator.h
@@ -28,9 +36,23 @@ H:/code/code/c/clion/MySTL/iterator.h
 cstddef
 -
 
+H:/code/code/c/clion/MySTL/list.h
+algobase.h
+H:/code/code/c/clion/MySTL/algobase.h
+construct.h
+H:/code/code/c/clion/MySTL/construct.h
+iterator.h
+H:/code/code/c/clion/MySTL/iterator.h
+alloctor.h
+H:/code/code/c/clion/MySTL/alloctor.h
+cstddef
+-
+
 H:/code/code/c/clion/MySTL/main.cpp
-uninitialized.h
-H:/code/code/c/clion/MySTL/uninitialized.h
+vector.h
+H:/code/code/c/clion/MySTL/vector.h
+list.h
+H:/code/code/c/clion/MySTL/list.h
 
 H:/code/code/c/clion/MySTL/uninitialized.h
 iterator.h
@@ -42,5 +64,19 @@ H:/code/code/c/clion/MySTL/algobase.h
 construct.h
 H:/code/code/c/clion/MySTL/construct.h
 string.h
+-
+
+H:/code/code/c/clion/MySTL/vector.h
+alloctor.h
+H:/code/code/c/clion/MySTL/alloctor.h
+construct.h
+H:/code/code/c/clion/MySTL/construct.h
+uninitialized.h
+H:/code/code/c/clion/MySTL/uninitialized.h
+algobase.h
+H:/code/code/c/clion/MySTL/algobase.h
+iterator.h
+H:/code/code/c/clion/MySTL/iterator.h
+initializer_list
 -
 

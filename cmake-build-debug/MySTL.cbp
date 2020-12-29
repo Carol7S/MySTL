@@ -101,16 +101,25 @@
 		<Unit filename="H:/code/code/c/clion/MySTL/construct.h">
 			<Option target="MySTL"/>
 		</Unit>
+		<Unit filename="H:/code/code/c/clion/MySTL/deque.h">
+			<Option target="MySTL"/>
+		</Unit>
 		<Unit filename="H:/code/code/c/clion/MySTL/iterator.h">
 			<Option target="MySTL"/>
 		</Unit>
 		<Unit filename="H:/code/code/c/clion/MySTL/jjauto_ptr.h">
 			<Option target="MySTL"/>
 		</Unit>
+		<Unit filename="H:/code/code/c/clion/MySTL/list.h">
+			<Option target="MySTL"/>
+		</Unit>
 		<Unit filename="H:/code/code/c/clion/MySTL/main.cpp">
 			<Option target="MySTL"/>
 		</Unit>
 		<Unit filename="H:/code/code/c/clion/MySTL/uninitialized.h">
+			<Option target="MySTL"/>
+		</Unit>
+		<Unit filename="H:/code/code/c/clion/MySTL/vector.h">
 			<Option target="MySTL"/>
 		</Unit>
 		<Unit filename="H:/code/code/c/clion/MySTL/CMakeLists.txt">

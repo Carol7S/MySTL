@@ -216,6 +216,11 @@ namespace mystl{
         void pop_back_aux();
         void pop_front();
         void pop_front_aux();
+        void clear();
+        iterator erase(iterator pos);
+        iterator erase(iterator first, iterator last);
+        iterator insert(iterator pos, value_type& x);
+        iterator insert_aux(iterator pos, value_type& x);
     };
 
     //create_map_and_nodes()负责申请 num_elements 个元素的存储空间，并安排好deque的结构
@@ -430,5 +435,120 @@ namespace mystl{
         start.set_node(start.node + 1);             //调整node
         start.cur = start.first;                    //调整cur
     }
+    template<class T, class Alloc, size_t BufSize>
+    void deque<T, Alloc, BufSize>::clear() {
+        //请注意，deque的最初状态（无任何元素时）保有一个缓冲区，因此，clear()完成之后回复初始状态，也一样要保留一个缓冲区:
+        for(map_pointer node = start.node + 1; node < finish.node; ++node){
+            //将缓冲区的内的所有元素析构
+            destroy(*node, *node+buffer_size());
+            //释放缓冲区
+            data_allocator::deallocate(*node, buffer_size());
+        }
+        if(start.node != finish.node) {//至少有头尾两个缓冲区
+            destroy(start.cur, start.last);//将头缓冲区的元素全部析构
+            destroy(finish,start, finish.cur);//将尾缓冲区的全部元素析构
+            //以下释放尾缓冲区，注意，头缓冲区保留
+            data_allocator::deallocate(finish.first, buffer_size());
+        } else{
+            //只有一个缓冲区
+            destroy(start.cur ,finish.cur);     //将此唯一缓冲区的所有元素析构
+            //注意，不释放，这唯一的缓冲区保留
+        }
+        finish = start;     //调整
+    }
+
+    template<class T, class Alloc, size_t BufSize>
+    typename deque<T, Alloc, BufSize>::iterator
+    deque<T, Alloc, BufSize>::erase(iterator pos) {//用来清除某个元素
+        iterator next = pos;
+        ++next;
+        difference_type index = pos - start;    //清除点之前的元素个数
+        if(index < (size() >> 1)) {   //如果清除点之前的元素较少  >>1 == /2
+            copy_backward(start, pos, next);    //就移动清除点之前的元素
+            pop_front();                        //移动完毕，最前面一个元素冗余，去除
+        } else{
+            //清除点之后的元素较少
+            copy(next, finish, pos);    //就移动清除点之后的元素
+            pop_back();                 //移动完毕，清楚最后一个元素
+        }
+        return start + index;
+    }
+
+    template<class T, class Alloc, size_t BufSize>
+    typename deque<T, Alloc, BufSize>::iterator
+    deque<T, Alloc, BufSize>::erase(iterator first, iterator last) {//清楚某段区间的元素
+        if(first == start && last == finish){ //整个区间都要释放
+            clear();                        //直接调用clear
+            return finish;
+        }else {
+            difference_type len = last - first;				//清除区间长度
+            difference_type elem_before = first - start;	//清除区间前方的元素个数
+            if (elem_before < (finish - last)) {			//如果前方的元素比较少
+                copy_backward(start, first, last);		//向后移动前方的元素，覆盖掉清除区间
+                iterator new_start = start + len;		//标记deque的新起点
+                destroy(start, new_start);				//移动完毕，将多余的元素析构
+                /* 以下将多余的缓冲区释放 */
+                for (map_pointer cur = start.node; cur < new_start.node; ++cur)
+                    data_allocator::deallocate(*cur, buffer_size());
+                start = new_start;		//设定 deque 新起点
+            }
+            else {			//清除区间后方的元素比较少
+                copy(last, finish, first);		//将后方的元素向前移动，覆盖掉清除区间
+                iterator new_finish = finish - len;		//标记 deque 的新尾点
+                destroy(new_finish, finish);			//移动完毕，将多余的元素析构
+                /* 以下将多余的缓冲区释放 */
+                for (map_pointer cur = new_finish.node + 1; cur <= finish.node; ++cur)
+                    data_allocator::deallocate(*cur, buffer_size());
+                finish = new_finish;		//设定 deque 的新尾点
+            }
+            return start + elem_before;
+        }
+    }
+
+    template<class T, class Alloc, size_t BufSize>
+    typename deque<T, Alloc, BufSize>::iterator
+    deque<T, Alloc, BufSize>::insert(iterator pos, value_type &x) {
+        if(pos.cur == start.first) {  //如果插入的是deque最前端
+            push_front(x);
+            return start;
+        }
+        else if(pos.cur == finish.last){//如果插入的是deque最尾端
+            push_back(x);
+            iterator tmp = finish;
+            --tmp;
+            return tmp;
+        } else{
+            return insert_aux(pos, x);
+        }
+    }
+
+    template<class T, class Alloc, size_t BufSize>
+    typename deque<T, Alloc, BufSize>::iterator
+    deque<T, Alloc, BufSize>::insert_aux(iterator pos, value_type &x) {
+        difference_type index = pos - start;    //插入点之前的元素个数
+        value_type x_copy = x;
+        if (index < (size() >> 1)) {           //如果插入点之前的元素比较少
+            push_front(front());         //在最前端加入与第一元素同值的元素
+            iterator front1 = start;        //以下标示记号，然后进行元素移动
+            ++front1;
+            iterator front2 = finish;
+            ++front2;
+            pos = start + index;
+            iterator pos1 = pos;
+            ++pos1;
+            copy(front2, pos1, front1);     //元素移动
+        } else{
+            push_back(back());
+            iterator back1 = finish;
+            --back1;
+            iterator back2 = start;
+            --back2;
+            pos = start + index;
+            copy_backward(pos, back2, back1);   //元素移动
+        }
+        *pos = x_copy;
+        return pos;
+    }
 }
+
 #endif //MYSTL_DEQUE_H

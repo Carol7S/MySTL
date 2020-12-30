@@ -33,7 +33,10 @@ namespace mystl {
         iterator finish;			//目前使用空间的尾
         iterator end_of_storage;	//目前可用空间的尾
 
-        //内部函数，调用构造器释放vector占用的所有空间
+        //在pos处插入n个元素 x，若空间不足进行空间扩充
+        void insert_aux(iterator pos, size_type n, const T& x);
+
+        //调用构造器释放vector占用的所有空间
         void deallocate() {
             if (start) {
                 data_allocator::deallocate(start, end_of_storage - start);
@@ -42,10 +45,6 @@ namespace mystl {
             finish = 0;
             end_of_storage = 0;
         }
-
-        //内调函数，在pos处插入n个元素 x，若空间不足进行空间扩充
-        void insert_aux(iterator pos, size_type n, const T& x);
-
 
         //配置内存空间并填充内容
         void fill_initialize(size_type n, const T& value) {
@@ -62,37 +61,7 @@ namespace mystl {
             return result;
         }
 
-    public:		//vector的6种初始化方式
-        vector() : start(0), finish(0), end_of_storage(0) { }	//1 默认构造
-        explicit vector(size_type n) { fill_initialize(n, T()); }	//2 指定大小  explicit该构造函数是显示的，implicit该构造函数是隐式的
-        vector(int n, const T& value) { fill_initialize(n, value); }	//3	创建n个value
-        vector(size_type n, const T& value) { fill_initialize(n, value); }
-        template<class Iterator>
-        vector(Iterator first, Iterator last) {		//4 用区间初始化
-            size_type n = distance(first, last);
-            start = data_allocator::allocate(n);
-            uninitialized_copy(first, last, start);
-            finish = start + n;
-            end_of_storage = finish;
-        }
-        vector(const vector<T>& rhs) {		//5 拷贝构造
-            start = data_allocator::allocate(rhs.size());
-            uninitialized_copy(rhs.start, rhs.finish, start);
-            finish = start + rhs.size();
-            end_of_storage = finish;
-        }
-        vector(std::initializer_list<T> init_list) {		//6 列表初始化
-            start = data_allocator::allocate(init_list.size());
-            uninitialized_copy(init_list.begin(), init_list.end(), start);
-            finish = start + init_list.size();
-            end_of_storage = finish;
-        }
-        ~vector() {
-            if (start)
-                destroy(start, finish);		//将对象析构
-            deallocate();			//释放内存
-        }
-
+    public:
         iterator begin() { return start; }
         const_iterator begin() const { return start; }
         iterator end() { return finish; }
@@ -101,20 +70,47 @@ namespace mystl {
         size_type capacity() const { return end_of_storage - start; }
         reference operator[](size_type n) { return *(start + n); }
         const_reference operator[](size_type n) const { return *(start + n); }
+
+        //vector的初始化
+        vector() : start(0), finish(0), end_of_storage(0) { }	//1 默认构造
+        explicit vector(size_type n) { fill_initialize(n, T()); }	//2 指定大小  explicit该构造函数是显示的，implicit该构造函数是隐式的
+        vector(int n, const T& value) { fill_initialize(n, value); }	//3	创建n个value
+        vector(size_type n, const T& value) { fill_initialize(n, value); }
+
+        template<class Iterator>
+        vector(Iterator first, Iterator last) {
+            //4 用区间初始化
+            size_type n = distance(first, last);
+            start = data_allocator::allocate(n);
+            uninitialized_copy(first, last, start);
+            finish = start + n;
+            end_of_storage = finish;
+        }
+        vector(const vector<T>& rhs) {
+            //5 拷贝构造
+            start = data_allocator::allocate(rhs.size());
+            uninitialized_copy(rhs.start, rhs.finish, start);
+            finish = start + rhs.size();
+            end_of_storage = finish;
+        }
+        vector(std::initializer_list<T> init_list) {
+            //6 列表初始化
+            start = data_allocator::allocate(init_list.size());
+            uninitialized_copy(init_list.begin(), init_list.end(), start);
+            finish = start + init_list.size();
+            end_of_storage = finish;
+        }
+
+        ~vector() {//析构
+            if (start)
+                destroy(start, finish);		//将对象析构
+            deallocate();			//释放内存
+        }
+
         reference front() { return *begin(); }
         const_reference front() const { return *begin(); }
         reference back() { return *(end() - 1); }
         const_reference back() const { return *(end() - 1); }
-
-        /* 在pos位置插入n个元素x */
-        void insert(iterator pos, size_type n, const T& x) {
-            insert_aux(pos, n, x);
-        }
-
-        /* 在pos位置插入一个元素x */
-        void insert(iterator pos, const T& x) {
-            insert_aux(pos, 1, x);
-        }
 
         void push_front(const T& x) {
             insert_aux(begin(), 1, x);
@@ -139,7 +135,17 @@ namespace mystl {
             destroy(finish);
         }
 
-        //删除位置 pos 上的元素
+        // 在pos位置插入n个元素x
+        void insert(iterator pos, size_type n, const T& x) {
+            insert_aux(pos, n, x);
+        }
+
+        // 在pos位置插入一个元素x
+        void insert(iterator pos, const T& x) {
+            insert_aux(pos, 1, x);
+        }
+
+        //删除位置pos上的元素
         iterator erase(iterator pos) {
             if (pos + 1 != end()) {		//如果不是删除最后一个元素
                 copy(pos + 1, finish, pos);	//后续元素向前移动。交由高阶STL算法处理，实现见 2stl_algobase.h
@@ -173,15 +179,13 @@ namespace mystl {
             resize(new_sz, (T)0);
         }
 
-        //预留reser_size个空间
-        void reserve(size_type reser_size) {
-            if (reser_size <= capacity())
+        //预留re_size个空间    保留
+        void reserve(size_type re_size) {
+            if (re_size <= capacity())
                 return;
-
             //首先决定新长度：旧长度的两倍或新插入元素长度的两倍
             const size_type old_capacity = capacity();
-            const size_type new_capacity = 2 * max(old_capacity, reser_size);
-
+            const size_type new_capacity = 2 * max(old_capacity, re_size);
             //以下配置新的 vector 空间
             iterator new_start = data_allocator::allocate(new_capacity);
             iterator new_finish = new_start;
@@ -217,7 +221,8 @@ namespace mystl {
             erase(begin(), end());
         }
     }; //end of namespace vector
-    /* 从pos位置开始，插入 n 个元素 x  */
+
+    //从pos位置开始，插入n个元素x
     template<class T, class Alloc>
     void vector<T, Alloc>::insert_aux(iterator pos, size_type n, const T& x) {
         if (n > 0)

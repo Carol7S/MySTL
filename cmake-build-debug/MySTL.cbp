@@ -116,6 +116,15 @@
 		<Unit filename="H:/code/code/c/clion/MySTL/main.cpp">
 			<Option target="MySTL"/>
 		</Unit>
+		<Unit filename="H:/code/code/c/clion/MySTL/multimap.h">
+			<Option target="MySTL"/>
+		</Unit>
+		<Unit filename="H:/code/code/c/clion/MySTL/queue.h">
+			<Option target="MySTL"/>
+		</Unit>
+		<Unit filename="H:/code/code/c/clion/MySTL/rbtree.h">
+			<Option target="MySTL"/>
+		</Unit>
 		<Unit filename="H:/code/code/c/clion/MySTL/stack.h">
 			<Option target="MySTL"/>
 		</Unit>

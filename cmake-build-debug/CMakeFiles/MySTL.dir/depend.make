@@ -9,6 +9,9 @@ CMakeFiles/MySTL.dir/main.cpp.obj: ../deque.h
 CMakeFiles/MySTL.dir/main.cpp.obj: ../iterator.h
 CMakeFiles/MySTL.dir/main.cpp.obj: ../list.h
 CMakeFiles/MySTL.dir/main.cpp.obj: ../main.cpp
+CMakeFiles/MySTL.dir/main.cpp.obj: ../multimap.h
+CMakeFiles/MySTL.dir/main.cpp.obj: ../queue.h
+CMakeFiles/MySTL.dir/main.cpp.obj: ../rbtree.h
 CMakeFiles/MySTL.dir/main.cpp.obj: ../stack.h
 CMakeFiles/MySTL.dir/main.cpp.obj: ../uninitialized.h
 CMakeFiles/MySTL.dir/main.cpp.obj: ../vector.h

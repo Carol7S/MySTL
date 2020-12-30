@@ -13,8 +13,8 @@ namespace mystl {
     namespace detail {
         /* 以下是list节点结构 */
         template<class T>
-        struct __node_type {
-            typedef __node_type<T>*     link_type;
+        struct __list_node {
+            typedef __list_node<T>*     link_type;
             link_type prev;        //型别为__node_type<T>*，也可设为 void*
             link_type next;
             T data;
@@ -24,8 +24,8 @@ namespace mystl {
         template<class T, class Ref = T &, class Ptr = T *>
         struct __list_iterator {
         public:
-            typedef __list_iterator<T, Ref, Ptr>                            self;
             typedef __list_iterator<T, T&, T*>                              iterator;
+            typedef __list_iterator<T, Ref, Ptr>                            self;
             typedef const __list_iterator<T, T&, T*>                        const_iterator;
 
             typedef bidirectional_iterator_tag                              iterator_category;        //双向迭代器
@@ -34,9 +34,10 @@ namespace mystl {
             typedef const Ptr                                               const_pointer;
             typedef Ref                                                     reference;
             typedef const Ref                                               const_reference;
+            typedef __list_node<T>*                                         link_type;
             typedef size_t                                                  size_type;
             typedef ptrdiff_t                                               difference_type;
-            typedef __node_type<T>*                                         link_type;
+
             link_type node;        //迭代器内部拥有一个指针，指向list的节点
 
             //constructor
@@ -46,7 +47,6 @@ namespace mystl {
 
             //重载
             bool operator==(const self &x) const { return node == x.node; }
-
             bool operator!=(const self &x) const { return node != x.node; }
 
             //以下对迭代器取值，取的是节点的数值
@@ -86,7 +86,6 @@ namespace mystl {
     class list {
     public:
         typedef typename detail::__list_iterator<T, T&, T*>::link_type           link_type;
-
         typedef typename detail::__list_iterator<T, T&, T*>::iterator               iterator;
         typedef typename detail::__list_iterator<T, T&, T*>::const_iterator         const_iterator;
         typedef typename detail::__list_iterator<T, T&, T*>::iterator_category      category;
@@ -99,7 +98,7 @@ namespace mystl {
         typedef typename detail::__list_iterator<T, T&, T*>::difference_type        difference_type;
 
     protected:
-        size_type size_;
+        size_type _size;
         link_type node;
         /* 只需要一个指针即可实现双向循环链表。为了实现标准的前闭后开	*/
         /* 区间表示法，node 指向尾端后面的一个空白节点，便于其他操作	*/
@@ -112,7 +111,7 @@ namespace mystl {
         }
 
     protected:
-        typedef detail::__node_type<T>                          list_node;
+        typedef detail::__list_node<T>                          list_node;
         //专属空间配置器，每次配置一个节点大小
         typedef simple_alloc<list_node, Alloc>                  list_node_allocator;
 
@@ -147,7 +146,7 @@ namespace mystl {
             node = get_node();		//配置一个节点，令 node 指向它
             node->next = node;
             node->prev = node;		//node的头尾均指向自己，不设元素值
-            size_ = 0;
+            _size = 0;
         }
 
         //这里会构造一个iterator对象
@@ -156,7 +155,7 @@ namespace mystl {
         iterator end() { return node; }
         const_iterator end() const { return node; }
         bool empty() const { return node->next == node;	}
-        size_type size() const { return size_;  }
+        size_type size() const { return _size;  }
 
         reference front() { return *begin(); }
         const_reference front() const { return *begin(); }
@@ -197,6 +196,7 @@ namespace mystl {
         //以下我使用快速排序按非递减方式排序
         //list不能使用STL的排序算法，因为STL的sort只接受随机迭代器
         void sort();
+
     };
 
     //函数实现
@@ -210,7 +210,7 @@ namespace mystl {
         tmp->prev = pos.node->prev;
         (pos.node->prev)->next = tmp;
         pos.node->prev = tmp;
-        ++size_;
+        ++_size;
         return tmp;
     }
 
@@ -223,7 +223,7 @@ namespace mystl {
         prev_node->next = next_node;
         next_node->prev = prev_node;
         destroy_node(pos.node);
-        --size_;
+        --_size;
         return iterator(next_node);
     }
 
@@ -239,7 +239,7 @@ namespace mystl {
         //将链表恢复到空链表状态
         node->next = node;
         node->prev = node;
-        size_ = 0;
+        _size = 0;
     }
 
     //remove 将值为 value 的所有元素移除
@@ -260,7 +260,7 @@ namespace mystl {
     //unique 移除数值相同且连续的元素为只剩一个
     template<class T, class Alloc>
     void list<T, Alloc>::unique() {
-        if (size_ == 0)
+        if (_size == 0)
             return;
 
         iterator first = begin();
@@ -278,7 +278,7 @@ namespace mystl {
     void list<T, Alloc>::splice(iterator pos, list<T, Alloc>& x) {
         if (!x.empty()) {
             transfer(pos, x.begin(), x.end());
-            size_ += x.size();
+            _size += x.size();
         }
     }
 
@@ -290,7 +290,7 @@ namespace mystl {
         if (pos == i || pos == j)
             return;
         transfer(pos, i, j);
-        ++size_;
+        ++_size;
     }
 
     //将 [first, last) 内的所有元素接合于 pos 所指位置之前，pos 和
@@ -299,7 +299,7 @@ namespace mystl {
     void list<T, Alloc>::splice(iterator pos, iterator first, iterator last) {
         if (first != last) {
             tranfer(pos, first, last);
-            size_ += distance(first, last);
+            _size += distance(first, last);
         }
     }
 
@@ -310,7 +310,7 @@ namespace mystl {
         iterator last1 = end();
         iterator first2 = x.begin();
         iterator last2 = x.end();
-        size_ += x.size();
+        _size += x.size();
 
         //注意：前提是两个 list 已经经过递增排序
         while (first1 != last1 && first2 != last2) {

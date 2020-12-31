@@ -61,6 +61,8 @@ cstddef
 -
 
 H:/code/code/c/clion/MySTL/main.cpp
+iostream
+-
 vector.h
 H:/code/code/c/clion/MySTL/vector.h
 list.h

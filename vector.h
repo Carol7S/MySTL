@@ -199,11 +199,9 @@ namespace mystl {
                 data_allocator::deallocate(new_start, new_capacity);
                 throw;		//注意要向高层抛出异常
             }
-
             //析构并释放原 vector
             destroy(begin(), end());
             deallocate();
-
             //以下调整水位标记
             start = new_start;
             finish = new_finish;

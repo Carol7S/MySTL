@@ -35,8 +35,8 @@ namespace mystl {
     private:
         //以下第一、第二参数分别为键值和元素型别。键值为pair第一参数，实值为pair，第二参数
         typedef detail::rb_tree<key_type, value_type, select1st<value_type>, key_compare, Alloc> rep_type;
-
         rep_type t;
+
     public:
         /* 以下并不像set将iterator定义为rb_tree的const_iterator，因为multimap可通过iterator改变元素实值 */
         typedef typename rep_type::iterator				iterator;
@@ -79,7 +79,6 @@ namespace mystl {
         //注意以下 下标操作符，写法虽然有些复杂，但是很巧妙
         T& operator[](const key_type& k) {
             return ( *( insert( value_type(k, T()) ) ) ).second;
-
             // insert(value_type(k, T()))返回的是一个 iterator
             // 其第一元素是指向成功插入或发生冲突的map元素（pair<Key, T>）的iterator
             // 所以 *((insert(value_type(k, T()))).first) 提领其第一元素，得到一个pair<Key, T>

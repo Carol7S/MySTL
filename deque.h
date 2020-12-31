@@ -23,8 +23,6 @@ namespace mystl{
         struct __deque_iterator{//deque迭代器
             typedef __deque_iterator<T, T&, T*, BufSize>             iterator;
             typedef __deque_iterator<T, T&, T*, BufSize>             const_iterator;
-            static size_t buffer_size() { return __deque_buf_size(BufSize, sizeof(T)); }
-
             typedef random_access_iterator_tag                      iterator_category;
             typedef T                                               value_type;
             typedef Ptr                                             pointer;
@@ -32,15 +30,14 @@ namespace mystl{
             typedef size_t                                          size_type;
             typedef ptrdiff_t                                       difference_type;
             typedef T**                                             map_pointer;
-
             typedef __deque_iterator                                self;
-
             //保持与容器的连接
             T* cur;             //指向此迭代器指向的缓冲区当前元素
             T* first;           //指向此迭代器指向的缓冲区头部
             T* last;            //指向此迭代器指向的缓冲区尾部
             map_pointer node;   //指向中控中心
 
+            static size_t buffer_size() { return __deque_buf_size(BufSize, sizeof(T)); }
             //deque迭代器关键行为
             //遇到边缘时跳到下一个buf
             void set_node(map_pointer new_node){
@@ -51,7 +48,7 @@ namespace mystl{
 
             //重载
             reference operator*(){ return *cur; }
-            Ptr operator->(){ return &(operator*() ); }     //这么写，大概是为了整齐统一
+            pointer operator->(){ return &(operator*() ); }     //这么写，大概是为了整齐统一
 
             difference_type operator-(const self& x){
                 return difference_type (buffer_size()) * (node - x.node -1) + (cur - first) + (x.last - x.cur);
@@ -135,8 +132,6 @@ namespace mystl{
     //deque的结构
     template<class T, class Alloc = alloc, size_t BufSize = 0>
     class deque{
-    public:
-
         //维护一个指向map的指针，start和finish两个迭代器，指向第一缓冲区的第一个元素和最后一个缓冲区的最后一个元素的下一个位置,
         // 同时也必须记住mapsize,一旦map大小不够，就分配一块更大的map
     public://basic type
@@ -150,15 +145,13 @@ namespace mystl{
         typedef typename detail::__deque_iterator<T, T&, T*, BufSize>::size_type			size_type;
         typedef typename detail::__deque_iterator<T, T&, T*, BufSize>::difference_type		difference_type;
 
-        size_t (*buffer_size)() = detail::__deque_iterator<T, T&, T*, BufSize>::buffer_size;
+        size_t (*buffer_size)() = detail::__deque_iterator<T, T&, T*, BufSize>::buffer_size;//注意，buffer_size是个函数
 
-    public:
         typedef typename detail::__deque_iterator<T, T&, T*, BufSize>::iterator              iterator;//迭代器
 
-    protected://map_poniter
-        //指针的指针
+    protected://map_poniter   指针的指针
         typedef pointer*              map_pointer;
-    protected://Data members    数据成员
+        //Data members    数据成员
         iterator start;
         iterator finish;
         map_pointer map;

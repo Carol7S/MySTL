@@ -140,7 +140,6 @@ namespace mystl {
         iterator QuickSortCore(iterator low, iterator high);
         void QuickSort(iterator low, iterator high);
 
-    protected:
         //产生一个空链表
         void empty_initialize() {
             node = get_node();		//配置一个节点，令 node 指向它
@@ -149,6 +148,7 @@ namespace mystl {
             _size = 0;
         }
 
+    public:
         //这里会构造一个iterator对象
         iterator begin() { return (*node).next; }
         const_iterator begin() const { return (*node).next; }
@@ -180,7 +180,7 @@ namespace mystl {
         //移除数值相同的连续元素为只剩一个
         void unique();
 
-        //将 x 接合于 pos 所指位置，x 必须不同于 *this
+        //将x接合于 pos 所指位置，x 必须不同于 *this    剪切
         void splice(iterator pos, list& x);
         //将 i 所指的元素接合于 pos 所指位置，pos 和 i 可以指向同一个 list
         void splice(iterator pos, iterator i);

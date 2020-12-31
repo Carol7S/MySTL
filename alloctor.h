@@ -42,6 +42,7 @@ namespace mystl     //第一级namespace是提供给外部用户使用的（后�
             static void deallocate(void* p, size_t n)
             {
                 ::free(p);
+                //::operator delete(p);	//作用同上
             }
 
             static void* reallocate(void *p, size_t old_sz, size_t new_sz)
@@ -150,7 +151,7 @@ namespace mystl     //第一级namespace是提供给外部用户使用的（后�
             /* 空间配置 */
             static void* allocate(size_t n);//详述于后
             /* 空间释放 */
-            static void deallocte(void*, size_t );//详述于后
+            static void deallocate(void*, size_t );//详述于后
             /* 重新配置空间大小 */
             static void* reallocate(void*, size_t, size_t);//详述于后
         };
@@ -199,7 +200,7 @@ namespace mystl     //第一级namespace是提供给外部用户使用的（后�
 
         template<bool threads, int inst>
         /* 空间释放函数, p不能为0 */
-        void __default_alloc_template<threads, inst>::deallocte(void *p, size_t n)
+        void __default_alloc_template<threads, inst>::deallocate(void *p, size_t n)
         {
             obj* q = (obj *) p;
             obj* volatile * my_free_list;
@@ -353,7 +354,7 @@ namespace mystl     //第一级namespace是提供给外部用户使用的（后�
         }
         static void deallocate(T* p, size_t n) {
             if (0 != n)
-                Alloc::deallocate(p, n * sizeof(T));
+                Alloc::deallocate(p, n*sizeof(T));
         }
         static void deallocate(T* p) {
             Alloc::deallocate(p, sizeof(T));

@@ -21,12 +21,14 @@ namespace mystl {
         typedef Compare						key_compare;	//键值比较仿函数
 
         //以下定义一个仿函数，其作用是实现元素比较函数（通过调用键值比较函数实现）
+        //内部类，就像一个成员函数,有权访问外面的元素，外面的元素没权访问里面的
         class value_compare : public binary_function<value_type, value_type, bool>
         {
         protected:
+            //友元类，允许multimap类访问value_compare类
             friend class multimap<Key, T, Alloc>;
             Compare comp;
-            value_compare(Compare c) : comp(c) { }
+            value_compare(Compare c) : comp(c) { }  //构造函数
         public:
             bool operator()(const value_type& x, const value_type& y) const {
                 return comp(x.first, y.first);
@@ -34,7 +36,9 @@ namespace mystl {
         };
     private:
         //以下第一、第二参数分别为键值和元素型别。键值为pair第一参数，实值为pair，第二参数
-        typedef detail::rb_tree<key_type, value_type, select1st<value_type>, key_compare, Alloc> rep_type;
+        typedef detail::rb_tree<key_type, value_type, select1st<value_type>, key_compare, Alloc>
+                rep_type;
+
         rep_type t;
 
     public:
@@ -47,9 +51,8 @@ namespace mystl {
         typedef typename rep_type::const_reference		const_reference;
         typedef typename rep_type::size_type			size_type;
         typedef typename rep_type::difference_type		difference_type;
-        //typedef typename rep_type::reverse_iterator	reverse_iterator;
 
-        multimap() : t(Compare()) { }
+        multimap() : t(Compare()) { }   //构造函数
         explicit multimap(const Compare& comp) : t(comp) { }
 
         template<class InputIterator>
@@ -64,7 +67,7 @@ namespace mystl {
             return *this;
         }
 
-        //以下所有的行为都调用 rb_tree 的行为
+        //以下的行为都调用 rb_tree 的行为
         key_compare key_comp() const { return t.key_comp(); }
         value_compare value_comp() const { return value_compare(t.key_comp()); }
 
@@ -76,7 +79,6 @@ namespace mystl {
         size_type size() const { return t.size(); }
         size_type max_size() const { return t.max_size(); }
 
-        //注意以下 下标操作符，写法虽然有些复杂，但是很巧妙
         T& operator[](const key_type& k) {
             return ( *( insert( value_type(k, T()) ) ) ).second;
             // insert(value_type(k, T()))返回的是一个 iterator

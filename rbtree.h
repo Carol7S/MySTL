@@ -348,7 +348,6 @@ namespace mystl{
         rb_tree<Key, Value, KeyOfValue, Compare, Alloc>&
         rb_tree<Key, Value, KeyOfValue, Compare, Alloc>::operator=(const self& x) {
             clear();		//先将原始的树清空
-
             key_compare = x.key_compare;
             header->parent = __copy(x.root());
             if (header->parent != nullptr)

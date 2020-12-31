@@ -26,7 +26,9 @@ namespace mystl{
             typedef random_access_iterator_tag                      iterator_category;
             typedef T                                               value_type;
             typedef Ptr                                             pointer;
+            typedef const Ptr					                    const_pointer;
             typedef Ref                                             reference;
+            typedef const Ref					                    const_reference;
             typedef size_t                                          size_type;
             typedef ptrdiff_t                                       difference_type;
             typedef T**                                             map_pointer;
@@ -47,10 +49,10 @@ namespace mystl{
             }
 
             //重载
-            reference operator*(){ return *cur; }
-            pointer operator->(){ return &(operator*() ); }     //这么写，大概是为了整齐统一
+            reference operator*() const { return *cur; }
+            pointer operator->() const { return &(operator*() ); }     //这么写，大概是为了整齐统一
 
-            difference_type operator-(const self& x){
+            difference_type operator-(const self& x) const {
                 return difference_type (buffer_size()) * (node - x.node -1) + (cur - first) + (x.last - x.cur);
                 //node - x.node -1像植树问题（B-A），表示有中间有几个缓冲区 比如第5个缓冲区-第1个缓冲区-1 = 3，中间有3个缓冲区
                 //再加上cur-first(当前buf（B）的剩余元素)，x.last-x.cur(开头buf（A）的剩余元素)
@@ -98,14 +100,14 @@ namespace mystl{
                             offset > 0 ? offset / difference_type (buffer_size())
                             : -difference_type((-offset-1) / buffer_size()) - 1;
                     //切换至正确节点
-                    set_node(node_offset);
+                    set_node(node + node_offset);
                     //切换至正确元素
                     cur = first + (offset - node_offset * difference_type(buffer_size()));
                 }
                 return *this;
             }
 
-            self operator+(difference_type n){
+            self operator+(difference_type n) const {
                 self tmp = *this;
                 return tmp += n;
             }
@@ -114,12 +116,12 @@ namespace mystl{
                 return *this += -n;
             }
 
-            self& operator-(difference_type n){
+            self operator-(difference_type n) const {
                 self tmp = *this;
                 return tmp -= n;
             }
             //实现随机存取
-            reference operator[](difference_type n) const { return *(*this+n); } //*this是cur，*(cur+n)是里面存的元素
+            reference operator[](difference_type n) const { return *(*this + n); } //*this是cur，*(cur+n)是里面存的元素
 
             bool operator==(const self& x) const {  return cur = x.cur; }
             bool operator!=(const self& x) const { return cur != x.cur; }
@@ -159,13 +161,15 @@ namespace mystl{
 
     public:
         iterator begin(){ return start; }
+        const_iterator begin() const { return start; }
         iterator end(){ return finish; }
-
+        const_iterator end() const { return finish; }
         reference operator[](size_type n){
             return start[difference_type(n)];
-        };
+        }
 
         reference front(){ return *start; }
+        const_reference front() const { return *start; }
         reference back(){
             iterator tmp = finish;
             --tmp;
@@ -174,7 +178,12 @@ namespace mystl{
             //因为 operator-(difference_type n) 的操作比 -- 复杂很多
         }
 
-        size_type size() const { return start - finish; }
+        const_reference back() const {
+            iterator tmp = finish;
+            --tmp;
+            return *tmp;
+        }
+        size_type size() const { return finish - start; }
         size_type max_size() const { return size_type(-1); } //极大值，4 or 8个字节无符号数的最大值
         bool empty() const { return finish == start; }
     //内存分配与管理
@@ -246,7 +255,7 @@ namespace mystl{
         /* 设置 start 指向第一个缓冲区、start.cur指向第一个缓冲区的第一个元素 */
         start.set_node(nstart);
         finish.set_node(nfinish);
-        start.cur = start.finish;
+        start.cur = start.first;
         finish.cur = finish.first + num_elements % buffer_size();
         //前面说过，如果刚好整除，会多配一个节点
         //此时即令cur 指向这多配的一个节点（所对映之缓冲区）的起始处
@@ -323,7 +332,7 @@ namespace mystl{
         if(finish.cur != finish.last-1){
             //最后缓冲区尚有一个以上的备用空间
             construct(finish.cur, t);   //直接在备用空间上构造
-            +finish.cur;                //调整cur
+            ++finish.cur;                //调整cur
         } else{//最后缓冲区已无（或只剩一个）备用空间
             push_back_aux(t);
         }
@@ -336,7 +345,7 @@ namespace mystl{
         *(finish.node + 1) = data_allocator::allocate(buffer_size());	   //配置一个新节点
         try{
             construct(finish.cur, t_copy);  //在原始 finish 所指缓冲区的最后一个存储位置构造元素
-            finish.setnode(finish.node+1);  //更新 finish 所指节点
+            finish.set_node(finish.node+1);  //更新 finish 所指节点
             finish.cur = finish.first;      //更新cur
         }
         catch (...) {//发生异常，将新配置的节点(finish所指节点的下一个节点)释放

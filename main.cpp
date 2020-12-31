@@ -44,6 +44,29 @@ void list_test(){
     }
 }
 
+void deque_test(){
+    std::cout << "start test of deque" << std::endl;
+    deque<int> ideq;
+
+    ideq.push_back(2);
+    std::cout << ideq[0] << std::endl;
+    std::cout << ideq.size() << std::endl;
+}
+
+void stack_test(){
+    std::cout << "start test of stack" << std::endl;
+    stack<int> istack;
+    istack.push(2);
+    istack.push(3);
+    std::cout << istack.top() << std::endl;
+    std::cout << istack.size() << std::endl;
+}
+
+
+
+void multimap_test(){
+    std::cout << "start test of multimap" << std::endl;
+}
 int main() {
     int ch;
     std::cout << "**********************************" << std::endl;
@@ -64,8 +87,18 @@ int main() {
         case 2:
             list_test();
             break;
+        case 3:
+            deque_test();
+            break;
+        case 4:
+            stack_test();
+            break;
+        case 5:
+            multimap_test();
+            break;
         default:
             std::cout << "Wrong!" << std::endl;
+            break;
     }
 
     return 0;

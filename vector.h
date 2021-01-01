@@ -34,7 +34,7 @@ namespace mystl {
         iterator end_of_storage;	//目前可用空间的尾
 
         //在pos处插入n个元素 x，若空间不足进行空间扩充
-        void insert_aux(iterator pos, size_type n, const T& x);
+        void insert_aux(iterator pos, size_type n, const T x);
 
         //调用构造器释放vector占用的所有空间
         void deallocate() {
@@ -112,7 +112,7 @@ namespace mystl {
         reference back() { return *(end() - 1); }
         const_reference back() const { return *(end() - 1); }
 
-        void push_front(const T& x) {
+        void push_front(const T x) {
             insert_aux(begin(), 1, x);
         }
 
@@ -136,12 +136,12 @@ namespace mystl {
         }
 
         // 在pos位置插入n个元素x
-        void insert(iterator pos, size_type n, const T& x) {
+        void insert(iterator pos, size_type n, const T x) {
             insert_aux(pos, n, x);
         }
 
         // 在pos位置插入一个元素x
-        void insert(iterator pos, const T& x) {
+        void insert(iterator pos, const T x) {
             insert_aux(pos, 1, x);
         }
 
@@ -222,7 +222,7 @@ namespace mystl {
 
     //从pos位置开始，插入n个元素x
     template<class T, class Alloc>
-    void vector<T, Alloc>::insert_aux(iterator pos, size_type n, const T& x) {
+    void vector<T, Alloc>::insert_aux(iterator pos, size_type n, const T x) {
         if (n > 0)
         {
             if (size_type(end_of_storage - finish) >= n) {

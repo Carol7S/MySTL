@@ -48,7 +48,7 @@ namespace mystl{        //外部接口
 
     //find
     template<class InputIterator, class T>
-    inline InputIterator find(InputIterator first, InputIterator last, T& value){
+    inline InputIterator find(InputIterator first, InputIterator last, T value){
         while(first != last && *first != value){
             ++first;
         }
@@ -57,6 +57,23 @@ namespace mystl{        //外部接口
 
     namespace detail{
             //内部细节
+
+        template<class RandomAccessIterator, class OutputIterator, class Distance>
+        inline OutputIterator __copy_d(RandomAccessIterator first, RandomAccessIterator last, OutputIterator result, Distance*) {
+            Distance n = last - first;
+            for (; n > 0; --n, ++first, ++result)	//以n作为循环条件，速度快
+                *result = *first;
+            return result;
+        }
+
+        /* RandomAccessIterator 版本 */
+        template<class RandomAccessIterator, class OutputIterator>
+        inline OutputIterator __copy(RandomAccessIterator first, RandomAccessIterator last, OutputIterator result, random_access_iterator_tag) {
+            return __copy_d(first, last, result, distance_type(first));
+        }
+
+
+
         /* __copy_dispatch泛化版本 */
         template<class InputIterator, class OutputIterator>
         struct __copy_dispatch {
@@ -95,19 +112,6 @@ namespace mystl{        //外部接口
             return result;
         }
 
-        /* RandomAccessIterator 版本 */
-        template<class RandomAccessIterator, class OutputIterator>
-        inline OutputIterator __copy(RandomAccessIterator first, RandomAccessIterator last, OutputIterator result, random_access_iterator_tag) {
-            return __copy_d(first, last, result, distance_type(first));
-        }
-        //又划分出一个函数，为的是其他地方也能用到
-        template<class RandomAccessIterator, class OutputIterator, class Distance>
-        inline OutputIterator __copy_d(RandomAccessIterator first, RandomAccessIterator last, OutputIterator result, Distance*) {
-            Distance n = last - first;
-            for (; n > 0; --n, ++first, ++result)	//以n作为循环条件，速度快
-                *result = *first;
-            return result;
-        }
 
         //以下版本适合于指针所指对象具备 trivial assignment operator
         template<class T>

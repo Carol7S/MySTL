@@ -8,6 +8,8 @@
 
 H:/code/code/c/clion/MySTL/__type_traits.h
 
+H:/code/code/c/clion/MySTL/algo.h
+
 H:/code/code/c/clion/MySTL/algobase.h
 iterator.h
 H:/code/code/c/clion/MySTL/iterator.h
@@ -15,6 +17,12 @@ __type_traits.h
 H:/code/code/c/clion/MySTL/__type_traits.h
 cstring
 -
+
+H:/code/code/c/clion/MySTL/algorithm.h
+algobase.h
+H:/code/code/c/clion/MySTL/algobase.h
+algo.h
+H:/code/code/c/clion/MySTL/algo.h
 
 H:/code/code/c/clion/MySTL/alloctor.h
 stdlib.h
@@ -63,6 +71,8 @@ cstddef
 H:/code/code/c/clion/MySTL/main.cpp
 iostream
 -
+string
+-
 vector.h
 H:/code/code/c/clion/MySTL/vector.h
 list.h
@@ -71,12 +81,12 @@ deque.h
 H:/code/code/c/clion/MySTL/deque.h
 stack.h
 H:/code/code/c/clion/MySTL/stack.h
-queue.h
-H:/code/code/c/clion/MySTL/queue.h
 rbtree.h
 H:/code/code/c/clion/MySTL/rbtree.h
 multimap.h
 H:/code/code/c/clion/MySTL/multimap.h
+algorithm.h
+H:/code/code/c/clion/MySTL/algorithm.h
 
 H:/code/code/c/clion/MySTL/multimap.h
 alloctor.h

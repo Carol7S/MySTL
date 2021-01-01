@@ -123,7 +123,7 @@ namespace mystl{
             //实现随机存取
             reference operator[](difference_type n) const { return *(*this + n); } //*this是cur，*(cur+n)是里面存的元素
 
-            bool operator==(const self& x) const {  return cur = x.cur; }
+            bool operator==(const self& x) const {  return cur == x.cur; }
             bool operator!=(const self& x) const { return cur != x.cur; }
             bool operator<(const self& x) const{
                 return (node == x.node) ? (cur < x.cur) : (node < x.node);
@@ -219,8 +219,8 @@ namespace mystl{
         void clear();
         iterator erase(iterator pos);
         iterator erase(iterator first, iterator last);
-        iterator insert(iterator pos, value_type& x);
-        iterator insert_aux(iterator pos, value_type& x);
+        iterator insert(iterator pos, value_type x);
+        iterator insert_aux(iterator pos, value_type x);
     };
 
     //create_map_and_node()负责申请 num_elements 个元素的存储空间，并安排好deque的结构
@@ -447,7 +447,7 @@ namespace mystl{
         }
         if(start.node != finish.node) {//至少有头尾两个缓冲区
             destroy(start.cur, start.last);//将头缓冲区的元素全部析构
-            destroy(finish,start, finish.cur);//将尾缓冲区的全部元素析构
+            destroy(finish.first, finish.cur);//将尾缓冲区的全部元素析构
             //以下释放尾缓冲区，注意，头缓冲区保留
             data_allocator::deallocate(finish.first, buffer_size());
         } else{
@@ -508,7 +508,7 @@ namespace mystl{
 
     template<class T, class Alloc, size_t BufSize>
     typename deque<T, Alloc, BufSize>::iterator
-    deque<T, Alloc, BufSize>::insert(iterator pos, value_type &x) {
+    deque<T, Alloc, BufSize>::insert(iterator pos, value_type x) {
         if(pos.cur == start.first) {  //如果插入的是deque最前端
             push_front(x);
             return start;
@@ -525,7 +525,7 @@ namespace mystl{
 
     template<class T, class Alloc, size_t BufSize>
     typename deque<T, Alloc, BufSize>::iterator
-    deque<T, Alloc, BufSize>::insert_aux(iterator pos, value_type &x) {
+    deque<T, Alloc, BufSize>::insert_aux(iterator pos, value_type x) {
         difference_type index = pos - start;    //插入点之前的元素个数
         value_type x_copy = x;
         if (index < (size() >> 1)) {           //如果插入点之前的元素比较少

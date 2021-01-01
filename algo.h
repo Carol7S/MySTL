@@ -16,13 +16,13 @@ namespace mystl{
     }
     namespace detail{
         //search 内部
-        template<class ForwardIterator1, class ForwardIterator2, class Distance1, class Distanec2>
+        template<class ForwardIterator1, class ForwardIterator2, class Distance1, class Distance2>
         ForwardIterator1 __search(ForwardIterator1 first1, ForwardIterator1 last1,
                                   ForwardIterator2 first2, ForwardIterator2 last2,
-                                  Distance1*, Distanec2*)
+                                  Distance1*, Distance2*)
         {
-            Distance1 d1 = distance(first1, last1, d1);
-            Distanec2 d2 = distance(first2, last2, d2);
+            Distance1 d1 = distance(first1, last1);
+            Distance2 d2 = distance(first2, last2);
             if(d1 < d2) return last1;  //如果第二序列大于第一序列，那不可能成为他的子序列
             ForwardIterator1 current1 = first1;
             ForwardIterator2 current2 = first2;
@@ -50,7 +50,7 @@ namespace mystl{
                                    ForwardIterator2 first2,
                                    ForwardIterator2 last2)
     {
-        return __search(first1, last1, first2, last2, distance_type(first1), distance_type(first2));
+        return detail::__search(first1, last1, first2, last2, distance_type(first1), distance_type(first2));
     }
 
 
@@ -203,7 +203,7 @@ namespace mystl{
         template<class RandomAccessIterator>
         void __unguarded_insertion_insert(RandomAccessIterator first,
                                           RandomAccessIterator last){
-            __unguarded_insertion_insert_aux(first, last);
+            __unguarded_insertion_insert_aux(first, last, value_type(first));
         }
 
         template<class RandomAccessIterator>

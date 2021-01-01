@@ -72,9 +72,9 @@ namespace mystl {
         value_compare value_comp() const { return value_compare(t.key_comp()); }
 
         iterator begin() { return t.begin(); }
-        const_iterator begin() const { return t.begin(); }
+        //const_iterator begin() const { return t.begin(); }
         iterator end() { return t.end(); }
-        const_iterator end() const { return t.end(); }
+        //const_iterator end() const { return t.end(); }
         bool empty() const { return t.empty(); }
         size_type size() const { return t.size(); }
         size_type max_size() const { return t.max_size(); }

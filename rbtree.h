@@ -51,7 +51,7 @@ namespace mystl{
 
             base_ptr node;//它用来与容器产生一个连结关系
 
-            void increament(){
+            void increment(){
                 if(node->right != 0){//拥有右子节点,状况1
                     node = node->right;//向右走
                     while(node->left != 0)//然后一直往左子树走到底
@@ -71,7 +71,7 @@ namespace mystl{
                 }
             }
 
-            void decreament(){
+            void decrement(){
                 if(node->color == __rb_tree_red && //节点的颜色为红色
                 node->parent->parent == node)//节点的祖父节点是他自己
                     node = node->right; //状况1，右子节点即为解答
@@ -114,24 +114,24 @@ namespace mystl{
 #endif
 
             self& operator++(){
-                increament();
+                increment();
                 return *this;
             }
 
             self operator++(int){
                 self tmp = *this;
-                increament();
+                increment();
                 return tmp;
             }
 
             self& operator--(){
-                decreament();
+                decrement();
                 return *this;
             }
 
             self operator--(int){
                 self tmp = *this;
-                decreament();
+                decrement();
                 return tmp;
             }
 
@@ -218,6 +218,14 @@ namespace mystl{
             static const Key& key(link_type x) { return KeyOfValue()(x->value_field); }
             static color_type& color(link_type x) { return (color_type&)x->color; }
 
+            /* 以下六个函数用来方便取得base_ptr节点的成员 */
+            static link_type& left(base_ptr x) { return (link_type&) (x->left); }
+            static link_type& right(base_ptr x) { return (link_type&) (x->right); }
+            static link_type& parent(base_ptr x) { return (link_type&) (x->parent); }
+            static reference value(base_ptr x) { return ((link_type)x)->value_field; }
+            static const Key& key(base_ptr x) { return KeyOfValue()(value(x)); }
+            static color_type& color(base_ptr x) { return (color_type&)(link_type(x)->color); }
+            
             //取得极大值和极小值
             static link_type minimum(link_type x){
                 return (link_type) __rb_tree_node_base::minimum(x);
@@ -256,7 +264,9 @@ namespace mystl{
         public:
             Compare key_comp() const { return key_compare; }
             iterator begin() { return leftmost(); }
-            iterator end() { return rightmost(); }
+            const_iterator begin() const{ return leftmost(); }
+            iterator end(){ return header; }
+            const_iterator end() const{ return header; }
             bool empty() const { return node_count == 0; }
             size_type size() const { return node_count; }
             size_type max_size() const { return size_type (-1); }
@@ -287,7 +297,6 @@ namespace mystl{
 
                 if (it != end()) {
                     ++x_count;
-
                     //向后遍历查看是否还存在键值为key的元素
                     while (++it != end()) {
                         if (!key_compare(x, key(it.node)) && !key_compare(key(it.node), x))	 // !(a<b) && !(b<a) 即 a==b
@@ -378,7 +387,7 @@ namespace mystl{
                         node_queue.push(cur->left);
                     if (cur->right != nullptr)
                         node_queue.push(cur->right);
-                    destroy_node(link_type (cur));
+                    destory_node(link_type(cur));
                 }
 
                 /* 将 rb_tree 恢复到空状态 */
@@ -396,17 +405,15 @@ namespace mystl{
             link_type y = header;           //Last node which is not less than k
             link_type x = root();           //current node
 
-            //注意：当存在相同元素时，find 返回第一个元素的迭代器（递增迭代器可访问其他相同元素）
-
             while (x != nullptr) {
                 if (key_compare(key(x), k))
-                    x = right(x);			//运行到这里表示 x 键值小于 k，x 向右走
-                else if ( key_compare(k, key(x)) )
-                    x = left(x);			//运行到这里表示 x 键值大于 k，x 向左走
+                    x = right(x);            //运行到这里表示 x 键值小于 k，x 向右走
                 else
-                    return iterator(x);		//返回第一个目标元素
-            }
-            return end();
+                    y = x, x = left(y);        //运行到这里表示 x 键值大于或等于 k，x 向左走
+                }
+                iterator j = iterator(y);
+                return (j == end() || key_compare(k, key(j.node))) ? end() : j;
+
         }
 
         /* 插入新值：节点值允许重复 */

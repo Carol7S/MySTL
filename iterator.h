@@ -108,7 +108,7 @@ namespace mystl{
         template<typename RandAccessIterator>
         inline typename iterator_traits<RandAccessIterator>::difference_type
         __distance(RandAccessIterator first, RandAccessIterator last, random_access_iterator_tag){
-            return first - last;
+            return last - first;
         }
 
         /* 以下是整组advance函数细节 */
@@ -136,7 +136,8 @@ namespace mystl{
     template<typename InputIterator>
     inline typename iterator_traits<InputIterator>::difference_type
     distance(InputIterator first, InputIterator last){
-        typename iterator_traits<InputIterator>::iterator_category category;
+        typedef typename
+            iterator_traits<InputIterator>::iterator_category category;
         return detail::__distance(first, last, category());
     }
 
